@@ -1,0 +1,307 @@
+.. _sdp_release_note:
+
+#############
+Release Notes
+#############
+
+New features, bug fixes, and improvements are regularly made to the SageMaker
+distributed data parallel library.
+
+SageMaker Distributed Data Parallel 1.4.1 Release Notes
+=======================================================
+
+*Date: May. 3. 2022*
+
+**Currency Updates**
+
+* Added support for PyTorch 1.11.0
+
+**Known Issues**
+
+* The library currently does not support the PyTorch sub-process groups API (torch.distributed.new_group (https://pytorch.org/docs/stable/distributed.html#torch.distributed.new_group)).
+
+
+**Migration to AWS Deep Learning Containers**
+
+This version passed benchmark testing and is migrated to the following AWS Deep Learning Containers (DLC):
+
+- PyTorch 1.11.0 DLC
+
+  .. code::
+
+    763104351884.dkr.ecr.<region>.amazonaws.com/pytorch-training:1.11.0-gpu-py38-cu113-ubuntu20.04-sagemaker
+
+Binary file of this version of the library for custom container users:
+
+  .. code::
+
+    https://smdataparallel.s3.amazonaws.com/binary/pytorch/1.11.0/cu113/2022-04-14/smdistributed_dataparallel-1.4.1-cp38-cp38-linux_x86_64.whl
+
+
+----
+
+Release History
+===============
+
+SageMaker Distributed Data Parallel 1.4.0 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Date: Feb. 24. 2022*
+
+**New Features**
+
+* Integrated to PyTorch DDP as a backend option
+* Added support for PyTorch 1.10.2
+
+**Breaking Changes**
+
+* As the library is migrated into the PyTorch distributed package as a backend,
+  the following smdistributed implementation APIs are deprecated in
+  the SageMaker data parallal library v1.4.0 and later.
+  Please use the `PyTorch distributed APIs <https://pytorch.org/docs/stable/distributed.html>`_ instead.
+
+  * ``smdistributed.dataparallel.torch.distributed``
+  * ``smdistributed.dataparallel.torch.parallel.DistributedDataParallel``
+  * Please note the slight differences between the deprecated
+    ``smdistributed.dataparallel.torch`` APIs and the
+    `PyTorch distributed APIs <https://pytorch.org/docs/stable/distributed.html>`_.
+
+    * `torch.distributed.barrier <https://pytorch.org/docs/master/distributed.html#torch.distributed.barrier)>`_
+      takes ``device_ids``, which the ``smddp`` backend does not support.
+    * The ``gradient_accumulation_steps`` option in
+      ``smdistributed.dataparallel.torch.parallel.DistributedDataParallel``
+      is no longer supported. Please use the PyTorch
+      `no_sync <https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html?highlight=no_sync#torch.nn.parallel.DistributedDataParallel.no_sync>`_ API.
+
+
+* If you want to find documentation for the previous versions of the library
+  (v1.3.0 or before), see the `archived SageMaker distributed data parallel library documentation <https://sagemaker.readthedocs.io/en/stable/api/training/sdp_versions/latest.html#documentation-archive>`_.
+
+**Improvements**
+
+* Support for AllReduce Large Tensors
+* Support for the following new arguments in the `PyTorch DDP class
+  <https://pytorch.org/docs/stable/generated/torch.nn.parallel.DistributedDataParallel.html#torch.nn.parallel.DistributedDataParallel>`_.
+
+  * ``broadcast_buffers``
+  * ``find_unused_parameters``
+  * ``gradient_as_bucket_view``
+
+**Bug Fixes**
+
+* Fixed stalling issues when training on ``ml.p3.16xlarge``.
+
+**Known Issues**
+
+* The library currently does not support the PyTorch sub-process groups API (`torch.distributed.new_group <https://pytorch.org/docs/stable/distributed.html#torch.distributed.new_group>`_).
+  This means that you cannot use the ``smddp`` backend concurrently with other
+  process group backends such as NCCL and Gloo.
+
+**Migration to AWS Deep Learning Containers**
+
+This version passed benchmark testing and is migrated to the following AWS Deep Learning Containers (DLC):
+
+- PyTorch 1.10.2 DLC
+
+  .. code::
+
+    763104351884.dkr.ecr.<region>.amazonaws.com/pytorch-training:1.10.2-gpu-py38-cu113-ubuntu20.04-sagemaker
+
+
+SageMaker Distributed Data Parallel 1.2.2 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Date: November. 24. 2021*
+
+**New Features**
+
+* Added support for PyTorch 1.10
+* PyTorch ``no_sync`` API support for DistributedDataParallel
+* Timeout when training stalls due to allreduce and broadcast collective calls
+
+**Bug Fixes**
+
+* Fixed a bug that would impact correctness in the mixed dtype case
+* Fixed a bug related to the timeline writer that would cause a crash when SageMaker Profiler is enabled for single node jobs.
+
+**Improvements**
+
+* Performance optimizations for small models on small clusters
+
+**Migration to AWS Deep Learning Containers**
+
+This version passed benchmark testing and is migrated to the following AWS Deep Learning Containers:
+
+- PyTorch 1.10 DLC release: `v1.0-pt-sagemaker-1.10.0-py38 <https://github.com/aws/deep-learning-containers/releases/tag/v1.0-pt-sagemaker-1.10.0-py38>`_
+
+  .. code::
+
+    763104351884.dkr.ecr.<region>.amazonaws.com/pytorch-training:1.10.0-gpu-py38-cu113-ubuntu20.04-sagemaker
+
+
+SageMaker Distributed Data Parallel 1.2.1 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+*Date: June. 29. 2021*
+
+**New Features:**
+
+-  Added support for TensorFlow 2.5.0.
+
+**Improvements**
+
+-  Improved performance on a single node and small clusters (2-4 nodes).
+
+**Bug fixes**
+
+-  Enable ``sparse_as_dense`` by default for SageMaker distributed data
+   parallel library for TensorFlow APIs: ``DistributedGradientTape`` and
+   ``DistributedOptimizer``.
+
+**Migration to AWS Deep Learning Containers**
+
+This version passed benchmark testing and is migrated to the following AWS Deep Learning Containers:
+
+- TensorFlow 2.5.0 DLC release: `v1.0-tf-2.5.0-tr-py37
+  <https://github.com/aws/deep-learning-containers/releases/tag/v1.0-tf-2.5.0-tr-py37>`__
+
+  .. code::
+
+    763104351884.dkr.ecr.<region>.amazonaws.com/tensorflow-training:2.5.0-gpu-py37-cu112-ubuntu18.04-v1.0
+
+
+SageMaker Distributed Data Parallel 1.2.0 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  New features
+-  Bug Fixes
+
+**New features:**
+
+-  Support of `EFA network
+   interface <https://aws.amazon.com/hpc/efa/>`__ for distributed
+   AllReduce. For best performance, it is recommended you use an
+   instance type that supports Amazon Elastic Fabric Adapter
+   (ml.p3dn.24xlarge and ml.p4d.24xlarge) when you train a model using
+   SageMaker Distributed data parallel.
+
+**Bug Fixes:**
+
+-  Improved performance on single node and small clusters.
+
+----
+
+SageMaker Distributed Data Parallel 1.1.2 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  Bug Fixes
+-  Known Issues
+
+**Bug Fixes:**
+
+-  Fixed a bug that caused some TensorFlow operations to not work with
+   certain data types. Operations forwarded from C++ have been extended
+   to support every dtype supported by NCCL.
+
+**Known Issues:**
+
+-  SageMaker Distributed data parallel has slower throughput than NCCL
+   when run using a single node. For the best performance, use
+   multi-node distributed training with smdistributed.dataparallel. Use
+   a single node only for experimental runs while preparing your
+   training pipeline.
+
+----
+
+SageMaker Distributed Data Parallel 1.1.1 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  New Features
+-  Bug Fixes
+-  Known Issues
+
+**New Features:**
+
+-  Adds support for PyTorch 1.8.1
+
+**Bug Fixes:**
+
+-  Fixes a bug that was causing gradients from one of the worker nodes
+   to be added twice resulting in incorrect ``all_reduce`` results under
+   some conditions.
+
+**Known Issues:**
+
+-  SageMaker distributed data parallel still is not efficient when run
+   using a single node. For the best performance, use multi-node
+   distributed training with ``smdistributed.dataparallel``. Use a
+   single node only for experimental runs while preparing your training
+   pipeline.
+
+----
+
+SageMaker Distributed Data Parallel 1.1.0 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  New Features
+-  Bug Fixes
+-  Improvements
+-  Known Issues
+
+**New Features:**
+
+-  Adds support for PyTorch 1.8.0 with CUDA 11.1 and CUDNN 8
+
+**Bug Fixes:**
+
+-  Fixes crash issue when importing ``smdataparallel`` before PyTorch
+
+**Improvements:**
+
+-  Update ``smdataparallel`` name in python packages, descriptions, and
+   log outputs
+
+**Known Issues:**
+
+-  SageMaker DataParallel is not efficient when run using a single node.
+   For the best performance, use multi-node distributed training with
+   ``smdataparallel``. Use a single node only for experimental runs
+   while preparing your training pipeline.
+
+Getting Started
+
+For getting started, refer to SageMaker Distributed Data Parallel Python
+SDK Guide
+(https://docs.aws.amazon.com/sagemaker/latest/dg/data-parallel-use-api.html#data-parallel-use-python-skd-api).
+
+----
+
+SageMaker Distributed Data Parallel 1.0.0 Release Notes
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+-  First Release
+-  Getting Started
+
+First Release
+-------------
+
+SageMaker’s distributed data parallel library extends SageMaker’s
+training capabilities on deep learning models with near-linear scaling
+efficiency, achieving fast time-to-train with minimal code changes.
+SageMaker Distributed Data Parallel:
+
+-  optimizes your training job for AWS network infrastructure and EC2
+   instance topology.
+-  takes advantage of gradient update to communicate between nodes with
+   a custom AllReduce algorithm.
+
+The library currently supports TensorFlow v2 and PyTorch via `AWS Deep
+Learning
+Containers <https://aws.amazon.com/machine-learning/containers/>`__.
+
+Getting Started
+---------------
+
+For getting started, refer to `SageMaker Distributed Data Parallel
+Python SDK
+Guide <https://docs.aws.amazon.com/sagemaker/latest/dg/data-parallel-use-api.html#data-parallel-use-python-skd-api>`__.
